@@ -8,8 +8,8 @@ It currently supports lexical analysis and tokenization of code written in the l
 - Tokenization of:
   - Identifiers (letters and digits, must start with a letter)
   - Numbers
-  - Operators ( `+`, `-`, `*`, `/`, `=`)
-  - Special characters ( `(`, `)`, `;`, `,`, `_`, `{`, `}`, `:` )
+  - Operators ( `+` `-` `*` `/` `=`)
+  - Special characters ( `(` `)` `{` `}` `:` `;` `,` `_` )
 
 ## How to use
 
