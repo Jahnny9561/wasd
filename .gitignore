@@ -1,0 +1,23 @@
+# Compiled Artifacts
+*.exe
+a.out
+wasd
+main
+*.o
+*.obj
+
+# IDE and OS Files
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+
+# Temporary Files
+*.log
+*.tmp
+
+# Example wasd code
+example.txt
