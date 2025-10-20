@@ -12,7 +12,7 @@ int counter = 1;
 
 // Sets
 unordered_set<string> valid_operands = { "+", "-", "*", "/", "=" };
-unordered_set<char> special_symbols = { '(', ')', ',', ';' };
+unordered_set<char> special_symbols = { '(', ')', ',', ';', '_', '{', '}', ':' };
 
 bool isNumber(const string& token) {
     for (char c : token)
