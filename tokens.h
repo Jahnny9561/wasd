@@ -16,4 +16,9 @@ struct sInfo {
     int token;
 };
 
+struct StreamToken {
+    std::string lexeme;
+    tokenType type;
+};
+
 #endif

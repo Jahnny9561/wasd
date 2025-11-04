@@ -23,6 +23,7 @@ int main() {
 
     tokenize(buffer);
     listall(symbolTable);
-
+    listStream(tokenStream);
+    
     return 0;
 }

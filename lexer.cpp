@@ -8,6 +8,7 @@ using namespace std;
 
 // Global variables
 unordered_map<string, sInfo> symbolTable;
+vector<StreamToken> tokenStream;
 int counter = 1;
 
 // Sets
@@ -36,15 +37,20 @@ tokenType classify(string token) {
     return tokenUnknown;
 }
 
-void compare(const string buffer, unordered_map<string, sInfo>& symbolTable, int& counter) {
-    auto it = symbolTable.find(buffer);
+static void processToken(const string& token) {
+    if (token.empty()) return;
+
+    tokenType t = classify(token);
+    if (t == tokenUnknown) {
+        cout << "Error encountered at position: " << counter << endl;
+        exit(0);
+    }
+
+    tokenStream.push_back({token, t});
+
+    auto it = symbolTable.find(token);
     if (it == symbolTable.end()) {
-        tokenType t = classify(buffer);
-        if (t == tokenUnknown) {
-            cout << "Error encountered at position: " << counter << endl;
-            exit(0);
-        }
-        symbolTable[buffer] = { counter, t };
+        symbolTable[token] = { counter, t };
         counter++;
     }
 }
@@ -54,27 +60,27 @@ void tokenize(const string& buffer) {
     for (size_t i = 0; i < buffer.length(); ++i) {
         char c = buffer[i];
         if (isspace(c)) {
-            if (!token.empty()) { compare(token, symbolTable, counter); token.clear(); }
+            if (!token.empty()) { processToken(token); token.clear(); }
             continue;
         }
         if (valid_operands.count(string(1, c))) {
-            if (!token.empty()) { compare(token, symbolTable, counter); token.clear(); }
-            compare(string(1, c), symbolTable, counter);
+            if (!token.empty()) { processToken(token); token.clear(); }
+            processToken(string(1, c));
             continue;
         }
         if (special_symbols.count(c)) {
-            if (!token.empty()) { compare(token, symbolTable, counter); token.clear(); }
-            compare(string(1, c), symbolTable, counter);
+            if (!token.empty()) { processToken(token); token.clear(); }
+            processToken(string(1, c));
             continue;
         }
         if (isalnum(c)) {
             token += c;
         } else {
-            if (!token.empty()) { compare(token, symbolTable, counter); token.clear(); }
+            if (!token.empty()) { processToken(token); token.clear(); }
             cout << "Unknown character '" << c << "' at position " << i << endl;
         }
     }
-    if (!token.empty()) compare(token, symbolTable, counter);
+    if (!token.empty()) processToken(token);
 }
 
 string tokenTypeName(int type) {
@@ -88,6 +94,15 @@ string tokenTypeName(int type) {
 }
 
 void listall(const unordered_map<string, sInfo>& table) {
+    cout << "--- Symbol Table ---" << endl;
     for (const auto& pair : table)
         cout << pair.second.pos << " | " << pair.first << " | " << tokenTypeName(pair.second.token) << endl;
+}
+
+void listStream(const vector<StreamToken>& stream) {
+    cout << "--- Token Stream ---" << endl;
+    for (size_t i = 0; i < stream.size(); ++i) {
+        cout << i << " | " << stream[i].lexeme
+             << " | " << tokenTypeName(stream[i].type) << endl;
+    }
 }
