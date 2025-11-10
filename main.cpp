@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include "lexer.h"
-
+#include "parser.h"
 using namespace std;
 
 int main() {
@@ -21,7 +21,18 @@ int main() {
     string buffer = bufferStream.str();
     infile.close();
 
+    //Tokenize
     tokenize(buffer);
+
+    //Start parser
+    bool parseSuccess = parser();
+
+    //Check if parser is successful
+    if(!parseSuccess) {
+        cout<<"Program stopped"<<endl;
+        return 1;
+    }
+
     listall(symbolTable);
     listStream(tokenStream);
     

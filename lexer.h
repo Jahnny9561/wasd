@@ -3,7 +3,6 @@
 
 #include <string>
 #include <unordered_map>
-#include <vector>   
 #include "tokens.h"
 
 extern std::unordered_map<std::string, sInfo> symbolTable;

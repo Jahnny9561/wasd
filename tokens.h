@@ -2,13 +2,15 @@
 #define TOKENS_H
 
 #include <string>
+#include <vector>
 
 enum tokenType {
     tokenUnknown,     // 0
     tokenOperand,     // 1
     tokenNumber,      // 2
     tokenIdentifier,  // 3
-    tokenSpecialChar  // 4
+    tokenSpecialChar,  // 4
+    tokenKeyword //5
 };
 
 struct sInfo {

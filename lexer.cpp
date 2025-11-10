@@ -14,6 +14,7 @@ int counter = 1;
 // Sets
 unordered_set<string> valid_operands = { "+", "-", "*", "/", "=" };
 unordered_set<char> special_symbols = { '(', ')', ',', ';', '_', '{', '}', ':' };
+unordered_set<string> keywords = {"print"};
 
 bool isNumber(const string& token) {
     for (char c : token)
@@ -32,6 +33,7 @@ tokenType classify(string token) {
     if (token.empty()) return tokenUnknown;
     if (valid_operands.count(token)) return tokenOperand;
     if (isNumber(token)) return tokenNumber;
+    if (keywords.count(token)) return tokenKeyword;
     if (isIdentifier(token)) return tokenIdentifier;
     if (token.size() == 1 && special_symbols.count(token[0])) return tokenSpecialChar;
     return tokenUnknown;
@@ -87,6 +89,7 @@ string tokenTypeName(int type) {
     switch (type) {
         case tokenOperand: return "Operand";
         case tokenNumber: return "Number";
+        case tokenKeyword: return "Keyword";
         case tokenIdentifier: return "Identifier";
         case tokenSpecialChar: return "SpecialChar";
         default: return "Unknown";
