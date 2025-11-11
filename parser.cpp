@@ -15,6 +15,7 @@ static void term();
 static void expr();
 static void print_stm();
 static void assign_stm();
+static void while_stm();
 static void stm();
 static void block();
 static void body();
@@ -75,6 +76,7 @@ void block(){
 
 void stm(){
     if (currentToken.lexeme == "print") print_stm();
+    if (currentToken.lexeme == "while") while_stm();
     if (currentToken.type == 3) assign_stm();
 }
 
@@ -89,6 +91,20 @@ void print_stm(){
     advanceToken();
     if (currentToken.type != 3) error("Ident expected");
     advanceToken();
+}
+
+void while_stm(){
+    advanceToken();
+    if (currentToken.type != tokenIdentifier) error("Ident expected");
+    advanceToken();
+    if (currentToken.lexeme == ">") advanceToken();
+    else if (currentToken.lexeme == "<") advanceToken();
+    else error("'<' or '>' expected");
+    if (currentToken.type != tokenNumber) error("Number expected");
+    advanceToken();
+    if (currentToken.lexeme != ":") error("':' expected");
+    advanceToken();
+    body();
 }
 
 void expr(){

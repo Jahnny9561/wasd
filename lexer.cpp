@@ -12,9 +12,9 @@ vector<StreamToken> tokenStream;
 int counter = 1;
 
 // Sets
-unordered_set<string> valid_operands = { "+", "-", "*", "/", "=" };
+unordered_set<string> valid_operands = { "+", "-", "*", "/", "=", "<", ">" };
 unordered_set<char> special_symbols = { '(', ')', ',', ';', '_', '{', '}', ':' };
-unordered_set<string> keywords = {"print"};
+unordered_set<string> keywords = {"print", "while"};
 
 bool isNumber(const string& token) {
     for (char c : token)
