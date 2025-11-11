@@ -14,6 +14,7 @@ static void factor();
 static void term();
 static void expr();
 static void print_stm();
+static void input_stm();
 static void assign_stm();
 static void while_stm();
 static void comparison();
@@ -78,6 +79,7 @@ void block(){
 void stm(){
     if (currentToken.lexeme == "print") print_stm();
     else if (currentToken.lexeme == "while") while_stm();
+    else if (currentToken.lexeme == "input") input_stm();
     else if (currentToken.type == 3) assign_stm();
     else error("Statement expected or wrong statement");
 }
@@ -87,6 +89,12 @@ void assign_stm(){
     if (currentToken.lexeme != "=") error("Expected =");
     advanceToken();
     comparison();
+}
+
+void input_stm(){
+    advanceToken();
+    if (currentToken.type != tokenIdentifier) error("Identifier expected");
+    advanceToken();
 }
 
 void print_stm(){
@@ -106,7 +114,7 @@ void while_stm(){
 void comparison(){
     expr();
 
-    while (currentToken.lexeme == "<" || currentToken.lexeme == ">") 
+    if (currentToken.lexeme == "<" || currentToken.lexeme == ">") 
     {
         advanceToken();
         expr();
