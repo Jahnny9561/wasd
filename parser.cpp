@@ -76,8 +76,9 @@ void block(){
 
 void stm(){
     if (currentToken.lexeme == "print") print_stm();
-    if (currentToken.lexeme == "while") while_stm();
-    if (currentToken.type == 3) assign_stm();
+    else if (currentToken.lexeme == "while") while_stm();
+    else if (currentToken.type == 3) assign_stm();
+    else error("Statement expected or wrong statement");
 }
 
 void assign_stm(){
