@@ -26,14 +26,14 @@ Body   -> "{" block* "}"
 block  -> stm | Body
 stm    -> assignment_stm | print_stm
  
-assignment_stm -> ident "=" expr ";"
+assignment_stm -> ident "=" comparison ";"
 while_stm -> "while" comparison ":" Body
-print_stm      -> "print" expr ";"
+print_stm -> "print" comparison ";"
 
-comparison -> expr ( ("<" | ">" | "==" | "!=" | "<=" | ">=") expr )*
+comparison -> expr ( ("<" | ">") expr )*
 expr   -> term ( ("+" | "-")  term )*
 term   -> factor ( ("*" | "/") factor )*
-factor -> ident | integer | "(" expr ")"
+factor -> ident | integer | "(" comparison ")"
 ```
 
 
@@ -58,7 +58,7 @@ _wasd:
     i = 1
     while i < 10: 
     {
-       i = i + 1;
+       i = i + 1
     }
 }
 ```
