@@ -31,7 +31,7 @@ while_stm -> "while" comparison ":" Body
 print_stm -> "print" comparison 
 input_stm -> "input" ident
 
-comparison -> expr ( ("<" | ">") expr )*
+comparison -> expr ( ("<" | ">") expr )
 expr   -> term ( ("+" | "-")  term )*
 term   -> factor ( ("*" | "/") factor )*
 factor -> ident | integer | "(" comparison ")"
