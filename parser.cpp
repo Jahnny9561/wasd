@@ -88,7 +88,7 @@ void assign_stm(){
     advanceToken();
     if (currentToken.lexeme != "=") error("Expected =");
     advanceToken();
-    comparison();
+    expr();
 }
 
 void input_stm(){
@@ -98,9 +98,8 @@ void input_stm(){
 }
 
 void print_stm(){
-    advanceToken();
-        
-    comparison();
+    advanceToken();      
+    expr();
 }
 
 void while_stm(){
@@ -148,7 +147,7 @@ void factor(){
     }
     else if (currentToken.lexeme == "("){
         advanceToken(); 
-        comparison(); 
+        expr(); 
 
         if (currentToken.lexeme != ")") error ("Expected ')'");
         advanceToken();
