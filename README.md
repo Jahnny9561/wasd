@@ -26,15 +26,15 @@ Body   -> "{" block* "}"
 block  -> stm | Body
 stm    -> assignment_stm | print_stm
  
-assignment_stm -> ident "=" comparison
+assignment_stm -> ident "=" expr
 while_stm -> "while" comparison ":" Body
-print_stm -> "print" comparison 
+print_stm -> "print" expr 
 input_stm -> "input" ident
 
-comparison -> expr ( ("<" | ">") expr )
+comparison -> expr ("<" | ">") expr
 expr   -> term ( ("+" | "-")  term )*
 term   -> factor ( ("*" | "/") factor )*
-factor -> ident | integer | "(" comparison ")"
+factor -> ident | integer | "(" expr ")"
 ```
 
 
