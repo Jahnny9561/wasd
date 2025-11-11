@@ -16,6 +16,7 @@ static void expr();
 static void print_stm();
 static void assign_stm();
 static void while_stm();
+static void comparison();
 static void stm();
 static void block();
 static void body();
@@ -85,27 +86,31 @@ void assign_stm(){
     advanceToken();
     if (currentToken.lexeme != "=") error("Expected =");
     advanceToken();
-    expr();
+    comparison();
 }
 
 void print_stm(){
     advanceToken();
-    if (currentToken.type != 3) error("Ident expected");
-    advanceToken();
+        
+    comparison();
 }
 
 void while_stm(){
     advanceToken();
-    if (currentToken.type != tokenIdentifier) error("Ident expected");
-    advanceToken();
-    if (currentToken.lexeme == ">") advanceToken();
-    else if (currentToken.lexeme == "<") advanceToken();
-    else error("'<' or '>' expected");
-    if (currentToken.type != tokenNumber) error("Number expected");
-    advanceToken();
+    comparison();
     if (currentToken.lexeme != ":") error("':' expected");
     advanceToken();
     body();
+}
+
+void comparison(){
+    expr();
+
+    while (currentToken.lexeme == "<" || currentToken.lexeme == ">") 
+    {
+        advanceToken();
+        expr();
+    }
 }
 
 void expr(){
@@ -135,7 +140,7 @@ void factor(){
     }
     else if (currentToken.lexeme == "("){
         advanceToken(); 
-        expr(); 
+        comparison(); 
 
         if (currentToken.lexeme != ")") error ("Expected ')'");
         advanceToken();
