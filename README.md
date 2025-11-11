@@ -11,7 +11,7 @@ It currently supports lexical analysis, tokenization and a recursive-descent par
   - Numbers
   - Operators ( `+` `-` `*` `/` `=` `<` `>` )
   - Special characters ( `(` `)` `{` `}` `:` `;` `,` `_` )
-  - Keywords ( `print` `while` )
+  - Keywords ( `print` `while` `input`)
 - Recursive-Descent Parser:
   - Consumes the token stream from the lexer.
   - Validates syntax against a formal grammar.
@@ -26,11 +26,12 @@ Body   -> "{" block* "}"
 block  -> stm | Body
 stm    -> assignment_stm | print_stm
  
-assignment_stm -> ident "=" comparison ";"
+assignment_stm -> ident "=" comparison
 while_stm -> "while" comparison ":" Body
-print_stm -> "print" comparison ";"
+print_stm -> "print" comparison 
+input_stm -> "input" ident
 
-comparison -> expr ( ("<" | ">") expr )*
+comparison -> expr ( ("<" | ">") expr )
 expr   -> term ( ("+" | "-")  term )*
 term   -> factor ( ("*" | "/") factor )*
 factor -> ident | integer | "(" comparison ")"
