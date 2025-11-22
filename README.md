@@ -16,7 +16,8 @@ It currently supports lexical analysis, tokenization and a recursive-descent par
   - Consumes the token stream from the lexer.
   - Validates syntax against a formal grammar.
   - Provides error messages.
-
+  - Generates Instruction Table used for IR
+  
 ## Supported grammar
 The parser currently validates code structured according to the following grammar rules (BNF):
 ```
@@ -24,7 +25,7 @@ Z      -> Head Body
 Head   -> "_" ident ":" 
 Body   -> "{" block* "}" 
 block  -> stm | Body
-stm    -> assignment_stm | print_stm
+stm    -> assignment_stm | print_stm | assignment_stm | input_stm
  
 assignment_stm -> ident "=" expr
 while_stm -> "while" comparison ":" Body
@@ -43,7 +44,7 @@ factor -> ident | integer | "(" expr ")"
 1. Compile the code:
 
 ```bash
-g++ main.cpp lexer.cpp parser.cpp -o wasd
+g++ main.cpp lexer.cpp parser.cpp semantic.cpp -o wasd
 ```
 2. Run with
 ```bash
@@ -109,6 +110,20 @@ Produces:
 17 | 1 | Number
 18 | } | SpecialChar
 19 | } | SpecialChar
+
+ -------- Instruction Table --------
+Op | Arg1 | Arg2 | Res
+INPUT   -       -       i
+ASSIGN  5       -       a
+ADD     i       2       &1
+MULT    10      2       &2
+ADD     a       &2      &3
+SMALLER &1      &3      &4
+WHILE   &4      GOTO_END        -
+ADD     i       1       &5
+ASSIGN  &5      -       i
+PRINT   -       -       i
+GOTO    LABEL_START     -       -
 ```
 ## Future features
 - Support for more functions, loops and conditionals
