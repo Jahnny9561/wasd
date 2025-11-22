@@ -2,7 +2,7 @@
 
 **wasd** is a custom programming language project implemented in C++.  
 
-It currently supports lexical analysis, tokenization and a recursive-descent parser that validates the language's grammar.
+It currently supports lexical analysis, tokenization and a recursive-descent parser that validates the language's grammar and generates an Intermediate Representation (IR) using Quadruples.
 ## Current features
 
 - Lexical analysis (lexer)
@@ -16,7 +16,10 @@ It currently supports lexical analysis, tokenization and a recursive-descent par
   - Consumes the token stream from the lexer.
   - Validates syntax against a formal grammar.
   - Provides error messages.
-  - Generates Instruction Table used for IR
+- Intermediate Representation (IR):
+  - Performs Semantic Analysis during parsing.
+  - Generates a linear Instruction Table based on Quadruples. ( `Op` `Arg1` `Arg2` `Result` )
+  - Supports arithmetic, assignment, I/O and control flow branching ( `goto` )
   
 ## Supported grammar
 The parser currently validates code structured according to the following grammar rules (BNF):
@@ -119,11 +122,11 @@ ADD     i       2       &1
 MULT    10      2       &2
 ADD     a       &2      &3
 SMALLER &1      &3      &4
-WHILE   &4      GOTO_END        -
+GOTO_F  &4      11      -
 ADD     i       1       &5
 ASSIGN  &5      -       i
-PRINT   -       -       i
-GOTO    LABEL_START     -       -
+PRINT   i       -       -
+GOTO    2       -       -
 ```
 ## Future features
 - Support for more functions, loops and conditionals
