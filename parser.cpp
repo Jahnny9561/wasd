@@ -134,21 +134,25 @@ void print_stm()
 {
     advanceToken();
     std::string result = expr();
-    updateTable(opPrint, "-", "-", result);
+    updateTable(opPrint, result, "-", "-");
 }
 
 void while_stm()
 {
     advanceToken();
+    std::string startLabel = std::to_string(instructionTable.size());
     std::string condResult = comparison();
 
-    updateTable(opWhile, condResult, "GOTO_END", "-");
+    int jumpInstructionIndex = instructionTable.size();
+    updateTable(opGoToFalse, condResult, "-", "-");
 
     if (currentToken.lexeme != ":")
         error("':' expected");
     advanceToken();
     body();
-    updateTable(opGoTo, "LABEL_START", "-", "-");
+    updateTable(opGoTo, startLabel, "-", "-");
+    std::string endLabel = std::to_string(instructionTable.size());
+    instructionTable[jumpInstructionIndex].arg2 = endLabel;
 }
 
 std::string comparison()
