@@ -3,15 +3,18 @@
 #include <sstream>
 #include "lexer.h"
 #include "parser.h"
+#include "semantic.h"
 using namespace std;
 
-int main() {
+int main()
+{
     string filename;
     cout << "Enter the filename to read: ";
     cin >> filename;
 
     ifstream infile(filename);
-    if (!infile) {
+    if (!infile)
+    {
         cerr << "Error: Could not open file " << filename << endl;
         return 1;
     }
@@ -21,20 +24,22 @@ int main() {
     string buffer = bufferStream.str();
     infile.close();
 
-    //Tokenize
+    // Tokenize
     tokenize(buffer);
 
-    //Start parser
+    // Start parser
     bool parseSuccess = parser();
 
-    //Check if parser is successful
-    if(!parseSuccess) {
-        cout<<"Program stopped"<<endl;
+    // Check if parser is successful
+    if (!parseSuccess)
+    {
+        cout << "Program stopped" << endl;
         return 1;
     }
 
     listall(symbolTable);
     listStream(tokenStream);
-    
+    printIR();
+
     return 0;
 }

@@ -1,5 +1,6 @@
 #include "parser.h"
 #include "tokens.h"
+#include "semantic.h"
 #include <iostream>
 using namespace std;
 
@@ -9,25 +10,27 @@ static StreamToken currentToken;
 static size_t streamPosition = 0;
 
 static void advanceToken();
-static void error(const string& message);
-static void factor();
-static void term();
-static void expr();
+static void error(const string &message);
+static std::string factor();
+static std::string term();
+static std::string expr();
 static void print_stm();
 static void input_stm();
 static void assign_stm();
 static void while_stm();
-static void comparison();
+static std::string comparison();
 static void stm();
 static void block();
 static void body();
 static void head();
 static void z();
 
-static void advanceToken() {
+static void advanceToken()
+{
 
-    if (streamPosition >= tokenStream.size()) {
-        currentToken = { "EOF", tokenUnknown };
+    if (streamPosition >= tokenStream.size())
+    {
+        currentToken = {"EOF", tokenUnknown};
         return;
     }
 
@@ -35,139 +38,218 @@ static void advanceToken() {
     streamPosition++;
 }
 
-void error(const string& message){
-    string err_msg = "PARSE ERROR: " + message + 
+void error(const string &message)
+{
+    string err_msg = "PARSE ERROR: " + message +
                      "\n -> At token: '" + currentToken.lexeme + "'";
-    
-    //Throw the error 
+
+    // Throw the error
     throw std::runtime_error(err_msg);
     std::terminate;
 }
 
-void z(){
+void z()
+{
     head();
     body();
 }
 
-void head(){
- if ( currentToken.lexeme != "_" )  error("expected '_'"); 
- advanceToken();
- if ( currentToken.type != 3 )  error("expected ident"); 
- advanceToken();
- if ( currentToken.lexeme != ":" )  error("expected ':'"); 
- advanceToken();
+void head()
+{
+    if (currentToken.lexeme != "_")
+        error("expected '_'");
+    advanceToken();
+    if (currentToken.type != 3)
+        error("expected ident");
+    advanceToken();
+    if (currentToken.lexeme != ":")
+        error("expected ':'");
+    advanceToken();
 }
 
-void body(){
-if (currentToken.lexeme != "{") error("expected '{'");
-advanceToken();
-while (currentToken.lexeme != "}" && currentToken.lexeme != "EOF") {
+void body()
+{
+    if (currentToken.lexeme != "{")
+        error("expected '{'");
+    advanceToken();
+    while (currentToken.lexeme != "}" && currentToken.lexeme != "EOF")
+    {
         block();
     }
-if (currentToken.lexeme != "}") error ("expected '}'");
-advanceToken();
+    if (currentToken.lexeme != "}")
+        error("expected '}'");
+    advanceToken();
 }
 
-void block(){
-        if (currentToken.lexeme == "{") {
+void block()
+{
+    if (currentToken.lexeme == "{")
+    {
         body();
-    } else {
+    }
+    else
+    {
         stm();
     }
 }
 
-void stm(){
-    if (currentToken.lexeme == "print") print_stm();
-    else if (currentToken.lexeme == "while") while_stm();
-    else if (currentToken.lexeme == "input") input_stm();
-    else if (currentToken.type == 3) assign_stm();
-    else error("Statement expected or wrong statement");
+void stm()
+{
+    if (currentToken.lexeme == "print")
+        print_stm();
+    else if (currentToken.lexeme == "while")
+        while_stm();
+    else if (currentToken.lexeme == "input")
+        input_stm();
+    else if (currentToken.type == tokenIdentifier)
+        assign_stm();
+    else
+        error("Statement expected or wrong statement");
 }
 
-void assign_stm(){
+void assign_stm()
+{
+    std::string varName = currentToken.lexeme;
     advanceToken();
-    if (currentToken.lexeme != "=") error("Expected =");
+    if (currentToken.lexeme != "=")
+        error("Expected =");
     advanceToken();
-    expr();
+
+    std::string result = expr();
+
+    updateTable(opAssign, result, "-", varName);
 }
 
-void input_stm(){
+void input_stm()
+{
     advanceToken();
-    if (currentToken.type != tokenIdentifier) error("Identifier expected");
+    if (currentToken.type != tokenIdentifier)
+        error("Identifier expected");
+    std::string varName = currentToken.lexeme;
+    updateTable(opInput, "-", "-", varName);
     advanceToken();
 }
 
-void print_stm(){
-    advanceToken();      
-    expr();
+void print_stm()
+{
+    advanceToken();
+    std::string result = expr();
+    updateTable(opPrint, "-", "-", result);
 }
 
-void while_stm(){
+void while_stm()
+{
     advanceToken();
-    comparison();
-    if (currentToken.lexeme != ":") error("':' expected");
+    std::string condResult = comparison();
+
+    updateTable(opWhile, condResult, "GOTO_END", "-");
+
+    if (currentToken.lexeme != ":")
+        error("':' expected");
     advanceToken();
     body();
+    updateTable(opGoTo, "LABEL_START", "-", "-");
 }
 
-void comparison(){
-    expr();
+std::string comparison()
+{
+    std::string left = expr();
 
-    if (currentToken.lexeme == "<" || currentToken.lexeme == ">") 
+    if (currentToken.lexeme == "<" || currentToken.lexeme == ">")
+    {
+        string op = currentToken.lexeme;
+        advanceToken();
+
+        std::string right = expr();
+        std::string temp = newTemp();
+
+        int opcode = (op == "<") ? opSmaller : opBigger;
+
+        updateTable(opcode, left, right, temp);
+
+        return temp;
+    }
+    else
+    {
+        return left;
+    }
+}
+
+std::string expr()
+{
+    std::string left = term();
+
+    while (currentToken.lexeme == "+")
     {
         advanceToken();
-        expr();
+        std::string right = term();
+        std::string temp = newTemp();
+
+        updateTable(opAdd, left, right, temp);
+        left = temp;
     }
+    return left;
 }
 
-void expr(){
-    term();
+std::string term()
+{
+    std::string left = factor();
 
-    while (currentToken.lexeme == "+"){
+    while (currentToken.lexeme == "*")
+    {
         advanceToken();
-        term();
+        std::string right = factor();
+        std::string temp = newTemp();
+
+        updateTable(opMult, left, right, temp);
+        left = temp;
     }
+    return left;
 }
 
-void term(){
-    factor();
-
-    while (currentToken.lexeme == "*"){
+std::string factor()
+{
+    std::string result = "";
+    if (currentToken.type == tokenIdentifier)
+    {
+        result = currentToken.lexeme;
         advanceToken();
-        factor();
     }
+    else if (currentToken.type == tokenNumber)
+    {
+        result = currentToken.lexeme;
+        advanceToken();
+    }
+    else if (currentToken.lexeme == "(")
+    {
+        advanceToken();
+        result = expr();
+        if (currentToken.lexeme != ")")
+            error("Expected ')'");
+        advanceToken();
+    }
+    else
+    {
+        error("Expected identifier, number, or '('");
+    }
+    return result;
 }
 
-void factor(){
-    if (currentToken.type == tokenIdentifier){
-        advanceToken();
-    }
-    else if (currentToken.type == tokenNumber){
-        advanceToken();
-    }
-    else if (currentToken.lexeme == "("){
-        advanceToken(); 
-        expr(); 
-
-        if (currentToken.lexeme != ")") error ("Expected ')'");
-        advanceToken();
-    }
-    else {
-        error("Expected identifier, number, or '('");   
-    }
-}
-
-bool parser(){
+bool parser()
+{
     cout << "--- Parser Start ---" << endl;
-    try{    
+    try
+    {
         advanceToken();
-        while (currentToken.lexeme != "EOF") {
+        while (currentToken.lexeme != "EOF")
+        {
             z();
-            }
-            cout << "--- Parser End Successfully ---" << endl;
-            return true;
+        }
+        cout << "--- Parser End Successfully ---" << endl;
+        return true;
     }
-    catch (const std::runtime_error& e) {
+    catch (const std::runtime_error &e)
+    {
         // Print the error message
         cout << e.what() << endl;
 
