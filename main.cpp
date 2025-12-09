@@ -7,12 +7,19 @@
 #include "interpreter.h"
 using namespace std;
 
-int main()
+int main(int argc, char *argv[])
 {
     string filename;
-    cout << "Enter the filename to read: ";
-    cin >> filename;
 
+    if (argc > 1)
+    {
+        filename = argv[1];
+    }
+    else
+    {
+        cout << "Enter the filename to read: ";
+        cin >> filename;
+    }
     ifstream infile(filename);
     if (!infile)
     {
@@ -54,6 +61,11 @@ int main()
     {
         runProgram();
     }
+
+    cout << "\nPress Enter to exit...";
+
+    cin.ignore();
+    cin.get();
 
     return 0;
 }
