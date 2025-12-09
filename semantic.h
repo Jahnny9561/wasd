@@ -17,16 +17,17 @@ enum operation
     opBigger = 9, // >
     opSmaller = 10,
     opGoTo = 11,
-    opGoToFalse = 12
+    opGoToFalse = 12,
+    opExit = 13
 };
 
 // Semantic struct for quadruples
 struct semStruct
 {
     int op;
-    std::string arg1;
-    std::string arg2;
-    std::string result;
+    int arg1;
+    int arg2;
+    int result;
 };
 
 // Global variable for the instruction table

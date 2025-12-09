@@ -152,7 +152,7 @@ void while_stm()
     body();
     updateTable(opGoTo, startLabel, "-", "-");
     std::string endLabel = std::to_string(instructionTable.size());
-    instructionTable[jumpInstructionIndex].arg2 = endLabel;
+    instructionTable[jumpInstructionIndex].arg2 = std::stoi(endLabel);
 }
 
 std::string comparison()
@@ -249,6 +249,8 @@ bool parser()
         {
             z();
         }
+
+        updateTable(opExit, "-", "-", "-");
         cout << "--- Parser End Successfully ---" << endl;
         return true;
     }
