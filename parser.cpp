@@ -192,6 +192,16 @@ std::string expr()
         updateTable(opAdd, left, right, temp);
         left = temp;
     }
+
+    while (currentToken.lexeme == "-")
+    {
+        advanceToken();
+        std::string right = term();
+        std::string temp = newTemp();
+
+        updateTable(opSub, left, right, temp);
+        left = temp;
+    }
     return left;
 }
 
@@ -206,6 +216,16 @@ std::string term()
         std::string temp = newTemp();
 
         updateTable(opMult, left, right, temp);
+        left = temp;
+    }
+
+    while (currentToken.lexeme == "/")
+    {
+        advanceToken();
+        std::string right = factor();
+        std::string temp = newTemp();
+
+        updateTable(opDiv, left, right, temp);
         left = temp;
     }
     return left;

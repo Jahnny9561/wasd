@@ -41,7 +41,19 @@ int main()
     listall(symbolTable);
     listStream(tokenStream);
     printIR();
-    runProgram();
+
+    cout << "Run normally (r) or debug (d)? ";
+    char mode;
+    cin >> mode;
+
+    if (mode == 'd')
+    {
+        debugProgram();
+    }
+    else
+    {
+        runProgram();
+    }
 
     return 0;
 }

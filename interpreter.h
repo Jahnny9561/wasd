@@ -3,5 +3,7 @@
 
 // The main function to execute the compiled instructions
 void runProgram();
+// Debugger
+void debugProgram();
 
 #endif

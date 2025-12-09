@@ -42,4 +42,6 @@ std::string newTemp();
 // prints the instruction table
 void printIR();
 
+std::string opToString(int op);
+
 #endif
