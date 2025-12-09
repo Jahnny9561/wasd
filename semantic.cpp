@@ -1,4 +1,7 @@
 #include "semantic.h"
+#include "lexer.h"
+#include "tokens.h"
+#include <unordered_set>
 #include <iostream>
 
 std::string opToString(int op)
@@ -34,6 +37,7 @@ std::string opToString(int op)
     }
 }
 
+extern std::unordered_map<std::string, sInfo> symbolTable;
 std::vector<semStruct> instructionTable;
 int tempCounter = 1;
 
@@ -44,7 +48,16 @@ void updateTable(int p, std::string arg1, std::string arg2, std::string res)
 
 std::string newTemp()
 {
-    return "&" + std::to_string(tempCounter++);
+    std::string tempName = "&" + std::to_string(tempCounter++);
+
+    sInfo info;
+    info.pos = counter++;
+    info.token = tokenIdentifier;
+    info.value = 0;
+
+    symbolTable[tempName] = info;
+
+    return tempName;
 }
 
 void printIR()
