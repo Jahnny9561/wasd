@@ -4,21 +4,25 @@
 #include <string>
 #include <vector>
 
-enum tokenType {
+enum tokenType
+{
     tokenUnknown,     // 0
     tokenOperand,     // 1
     tokenNumber,      // 2
     tokenIdentifier,  // 3
-    tokenSpecialChar,  // 4
-    tokenKeyword //5
+    tokenSpecialChar, // 4
+    tokenKeyword      // 5
 };
 
-struct sInfo {
+struct sInfo
+{
     int pos;
     int token;
+    int value;
 };
 
-struct StreamToken {
+struct StreamToken
+{
     std::string lexeme;
     tokenType type;
 };
