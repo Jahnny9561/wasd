@@ -22,7 +22,8 @@ It features a complete compiler pipeline, including lexical analysis, recursive-
   - Supports arithmetic, assignment, I/O and control flow branching ( `goto` )
 - Interpreter:
   - Executes the IR commands via direct-mapped memory for high performance
-  
+- Debugger:
+  - Executes the IR commands in steps and helps the user track down any errors
 ## Supported grammar
 The parser currently validates code structured according to the following grammar rules (BNF):
 ```
@@ -44,21 +45,58 @@ factor -> ident | integer | "(" expr ")"
 ```
 
 
-## How to use
+## How to build
 
-1. Compile the code:
+### Prerequisites
+
+```bash
+A C++ compiler (G++, Clang, or MSVC) supporting C++11 or higher
+```
+### Compile 
 
 ```bash
 g++ main.cpp lexer.cpp parser.cpp semantic.cpp interpreter.cpp -o wasd
 ```
-2. Run with
+## How to run 
+
+### Method 1: Launcher
+Simply run the executable.
 ```bash
 ./wasd  
 ```
-Enter the path to a .txt file containing code in the language.
+Enter the path to a .txt/.wasd file containing code in the language.
 
-### Example
-Suppose example.txt contains:
+### Method 2: Command Line Argument
+Pass the filename directly to the executable.
+```bash
+./wasd example.wasd
+```
+### Method 3: Custom File Extension (Windows)
+- You can associate .wasd files so they open automatically with your interpreter:
+
+  - Create a script file and name it test.wasd.
+
+  - Right-click the file and select Open With > Choose another app.
+
+  - Scroll to the bottom and click More apps > Look for another app on this PC.
+
+  - Select your compiled wasd.exe.
+
+  - Check "Always use this app to open .wasd files".
+
+  - Now, simply double-clicking any .wasd file will execute your code!
+
+## Debugger mode
+
+When running a program, you can choose Debug Mode (d). This launches the visual debugger:
+- **Step-by-step execution**: Press `Enter` to continue
+- **Live Instruction View**: See exactly which operation (ADD, SUB, JUMP, etc) is happening.
+- **Memory Tracking**: The console reports exactly which variable changed and shows the old -> new value.
+
+## Code examples
+
+### Loop 
+example.wasd:
 ```ini
 _wasd:
 {
@@ -71,107 +109,34 @@ _wasd:
     }
 }
 ```
-
-Running:
-```bash
-./wasd
-Enter filename: example.txt
+### Fibonacci Sequence
+fibunacci.wasd:
+```ini
+_fibonacci:
+{
+    input limit
+    
+    a = 0
+    b = 1
+    
+    print a
+    print b
+    
+    current = a + b
+    
+    while current < limit :
+    {
+        print current
+        
+        a = b
+        b = current
+        current = a + b
+    }
+}
 ```
-Produces:
-```bash
---- Parser Start ---
---- Parser End Successfully ---
---- Symbol Table ---
-11 | &5 | Identifier | value: 0
-8 | &2 | Identifier | value: 0
-7 | &1 | Identifier | value: 0
-5 | 10 | Number | value: 10
-10 | &4 | Identifier | value: 0
-6 | 1 | Number | value: 1
-3 | 5 | Number | value: 5
-2 | a | Identifier | value: 0
-4 | 2 | Number | value: 2
-1 | i | Identifier | value: 0
-9 | &3 | Identifier | value: 0
---- Token Stream ---
-0 | _ | SpecialChar
-1 | wasd | Identifier
-2 | : | SpecialChar
-3 | { | SpecialChar
-4 | input | Keyword
-5 | i | Identifier
-6 | a | Identifier
-7 | = | Operand
-8 | 5 | Number
-9 | while | Keyword
-10 | i | Identifier
-11 | + | Operand
-12 | 2 | Number
-13 | < | Operand
-14 | a | Identifier
-15 | + | Operand
-16 | ( | SpecialChar
-17 | 10 | Number
-18 | * | Operand
-19 | 2 | Number
-20 | ) | SpecialChar
-21 | : | SpecialChar
-22 | { | SpecialChar
-23 | i | Identifier
-24 | = | Operand
-25 | i | Identifier
-26 | + | Operand
-27 | 1 | Number
-28 | print | Keyword
-29 | i | Identifier
-30 | } | SpecialChar
-31 | } | SpecialChar
 
- -------- Instruction Table --------
-Op | Arg1 | Arg2 | Res
-INPUT   0       0       1
-ASSIGN  3       0       2
-ADD     1       4       7
-MULT    5       4       8
-ADD     2       8       9
-SMALLER 7       9       10
-GOTO_F  10      11      0
-ADD     1       6       11
-ASSIGN  11      0       1
-PRINT   1       0       0
-GOTO    2       0       0
-Exit    0       0       0
-----------------------------------------------
-
---- PROGRAM OUTPUT ---
-Input value: 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
---- EXIT INSTRUCTION REACHED ---
-```
 ## Future features
 - Support for more functions, loops and conditionals
-- Debugger
 
 ## License
 
