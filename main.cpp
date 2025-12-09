@@ -4,6 +4,7 @@
 #include "lexer.h"
 #include "parser.h"
 #include "semantic.h"
+#include "interpreter.h"
 using namespace std;
 
 int main()
@@ -40,6 +41,7 @@ int main()
     listall(symbolTable);
     listStream(tokenStream);
     printIR();
+    runProgram();
 
     return 0;
 }
